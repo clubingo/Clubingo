@@ -1038,6 +1038,7 @@ bingoCardsRef.onSnapshot((querySnapshot) => {
 
 document.addEventListener('click', (event) => {
     const cardElement = event.target.closest('.carton');
+    console.log("¡Se hizo clic en un cartón!");
     
     if (cardElement) {
         const cardId = cardElement.id;
@@ -1054,6 +1055,7 @@ document.addEventListener('click', (event) => {
 </body>
 
 </html>
+
 
 
 
