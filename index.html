@@ -996,65 +996,67 @@
                 _confirmCallback = null;
             });
         });
-    </script>
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    <script>
+  // Tu configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyB3v-YYWZAGxNMcOYWnMd1gTNW8GmMQ3Nm57hI-cs-419",
+    authDomain: "bingo-club-c65b6.firebaseapp.com",
+    projectId: "bingo-club-c65b6",
+    storageBucket: "bingo-club-c65b6.appspot.com",
+    messagingSenderId: "169978940924",
+    appId: "1:169978940924:web:b1d5bdc6882687c6394",
+    measurementId: "G-54WEKZWO"
+  };
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBlDXy0rbfeWRjeh913RDguZCQgmKQDv-I",
-  authDomain: "bingo-club-c65b6.firebaseapp.com",
-  projectId: "bingo-club-c65b6",
-  storageBucket: "bingo-club-c65b6.firebasestorage.app",
-  messagingSenderId: "169982894077",
-  appId: "1:169982894077:web:5b7c388b340028d6b7c394",
-  measurementId: "G-54REKSW2MC"
-};
+  // Importa las funciones que necesitas
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.5/firebase-analytics.js";
+  import { getFirestore, collection, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.5/firebase-firestore.js";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-    const bingoCardsRef = db.collection("cartones_de_bingo");
+  // Inicializa Firebase y los servicios
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
 
-bingoCardsRef.onSnapshot((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-        const cardData = doc.data();
-        const cardId = doc.id; 
-        const cardElement = document.getElementById(cardId);
-        
-        if (cardElement) {
-            if (cardData.estado === 'vendido') {
-                cardElement.classList.add('vendido');
-            } else {
-                cardElement.classList.remove('vendido');
-            }
-        }
-    });
-});
+  // Escuchar cambios en la base de datos en tiempo real y actualizar los cartones
+  onSnapshot(collection(db, "cartones_de_bingo"), (querySnapshot) => {
+      querySnapshot.forEach((document) => {
+          const cardData = document.data();
+          const cardId = document.id; 
+          const cardElement = document.getElementById(cardId);
+          
+          if (cardElement) {
+              if (cardData.estado === 'vendido') {
+                  cardElement.classList.add('vendido');
+              } else {
+                  cardElement.classList.remove('vendido');
+              }
+          }
+      });
+  });
 
-document.addEventListener('click', (event) => {
-    const cardElement = event.target.closest('.carton');
-    console.log("¡Se hizo clic en un cartón!");
-    
-    if (cardElement) {
-        const cardId = cardElement.id;
+  // Manejar los clics en los cartones
+  document.addEventListener('click', (event) => {
+      const cardElement = event.target.closest('.card-container');
+      
+      if (cardElement) {
+          const cardId = cardElement.id;
 
-        bingoCardsRef.doc(cardId).set({ estado: 'vendido' }, { merge: true })
-            .then(() => {
-                console.log("Cartón actualizado en la base de datos.");
-            })
-            .catch((error) => {
-                console.error("Error al actualizar el cartón: ", error);
-            });
-    }
-});
+          const docRef = doc(db, "cartones_de_bingo", cardId);
+          setDoc(docRef, { estado: 'vendido' }, { merge: true })
+              .then(() => {
+                  console.log("Cartón actualizado en la base de datos.");
+              })
+              .catch((error) => {
+                  console.error("Error al actualizar el cartón: ", error);
+              });
+      }
+  });
+</script>
 </body>
 
 </html>
+
 
 
 
