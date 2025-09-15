@@ -1018,8 +1018,42 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+    const bingoCardsRef = db.collection("cartones_de_bingo");
+
+bingoCardsRef.onSnapshot((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+        const cardData = doc.data();
+        const cardId = doc.id; 
+        const cardElement = document.getElementById(cardId);
+        
+        if (cardElement) {
+            if (cardData.estado === 'vendido') {
+                cardElement.classList.add('vendido');
+            } else {
+                cardElement.classList.remove('vendido');
+            }
+        }
+    });
+});
+
+document.addEventListener('click', (event) => {
+    const cardElement = event.target.closest('.carton');
+    
+    if (cardElement) {
+        const cardId = cardElement.id;
+
+        bingoCardsRef.doc(cardId).set({ estado: 'vendido' }, { merge: true })
+            .then(() => {
+                console.log("Cartón actualizado en la base de datos.");
+            })
+            .catch((error) => {
+                console.error("Error al actualizar el cartón: ", error);
+            });
+    }
+});
 </body>
 
 </html>
+
 
 
