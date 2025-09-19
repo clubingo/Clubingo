@@ -84,7 +84,7 @@
 
         .whatsapp-float {
             position: fixed;
-            bottom: 5rem; 
+            bottom: 1.5rem; 
             right: 1.5rem; 
             z-index: 1000;
             animation: bounce 2s infinite;
@@ -287,7 +287,7 @@
         html.dark .bingo-card .border-green-800 { border-color: #6ee7b7; }
         html.dark .bingo-card .bg-white { background-color: #4b5563; }
 
-        .card-menu-btn {
+        .card-download-btn {
             position: absolute;
             top: 8px;
             right: 8px;
@@ -296,53 +296,11 @@
             padding: 4px;
             border-radius: 50%;
             background-color: rgba(0, 0, 0, 0.2);
-            display: none;
             transition: background-color 0.2s;
         }
 
-        .card-container:hover .card-menu-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-menu-btn:hover {
+        .card-download-btn:hover {
             background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .card-menu {
-            position: absolute;
-            top: 45px;
-            right: 8px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 25;
-            overflow: hidden;
-            display: none;
-            min-width: 120px;
-        }
-
-        .card-menu a {
-            display: block;
-            padding: 10px 15px;
-            color: #333;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .card-menu a:hover {
-            background-color: #f0f0f0;
-        }
-
-        html.dark .card-menu {
-            background-color: #4b5563;
-        }
-        html.dark .card-menu a {
-            color: #e5e7eb;
-        }
-        html.dark .card-menu a:hover {
-            background-color: #374151;
         }
 
         @media print {
@@ -611,10 +569,10 @@
                 <li>Los premios se basan en la cantidad de cartones vendidos por juego y serán anunciados antes de comenzar.</li>
                 <li>No nos hacemos responsables por fallas de conexión a internet, cortes de luz o cualquier otro motivo ajeno a nuestra organización que le impida jugar.</li>
                 <li>Si un jugador no puede participar, debe comunicarlo al menos 1 hora antes de la partida para que su cartón sea válido en el próximo juego.</li>
-                <!-- CAMBIO: Texto actualizado -->
                 <li>No se realizarán reembolsos de dinero bajo ninguna circunstancia. En caso de no poder jugar (y notificarlo a tiempo), su número será liberado y se le asignará un nuevo cartón para la partida siguiente.</li>
                 <li>En caso de múltiples ganadores en la misma línea o cartón lleno, el premio se dividirá en partes iguales.</li>
                 <li>Cualquier comportamiento antideportivo o trampa resultará en la expulsión inmediata del grupo y la anulación de los cartones.</li>
+                <li class="font-bold">Todo el que juegue debe conocer las reglas de antemano, ya que el desconocer de estas reglas y/o normas no te hace exento de ellas.</li>
             </ul>
         </div>
     </div>
@@ -627,7 +585,6 @@
             <ul class="list-disc list-inside space-y-2">
                 <li>La información de contacto (número de teléfono) se utiliza únicamente para la comunicación relacionada con los juegos y pagos.</li>
                 <li>No compartimos tu información personal con terceros bajo ninguna circunstancia.</li>
-                <!-- CAMBIO: Línea eliminada -->
                 <li>Al unirte a nuestro grupo de WhatsApp, tu nombre y número de perfil serán visibles para otros miembros del grupo, según la configuración de WhatsApp.</li>
             </ul>
         </div>
@@ -772,19 +729,24 @@
 
         async function downloadCard(cardNumber, event) {
             event.stopPropagation();
-            const menu = document.getElementById(`menu-${cardNumber}`);
-            if (menu) menu.style.display = 'none';
+            
+            const toast = document.getElementById('admin-toast');
+            toast.innerText = 'Preparando descarga...';
+            toast.classList.remove('hidden');
 
             const cardContainer = document.getElementById(`card-${cardNumber}`);
             const cardElement = cardContainer.querySelector('.bingo-card');
-            const menuButton = cardElement.querySelector('.card-menu-btn');
+            const downloadButton = cardElement.querySelector('.card-download-btn');
 
-            if (menuButton) menuButton.style.display = 'none';
+            if (downloadButton) downloadButton.style.display = 'none';
 
             try {
+                await new Promise(resolve => setTimeout(resolve, 50));
+
                 const canvas = await html2canvas(cardElement, {
                     useCORS: true,
-                    scale: 2.5 
+                    scale: 2,
+                    backgroundColor: '#000000'
                 });
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png');
@@ -794,9 +756,12 @@
                 document.body.removeChild(link);
             } catch (error) {
                 console.error('Error al descargar el cartón:', error);
-                alert('Hubo un error al intentar descargar el cartón.');
+                toast.innerText = 'Error al descargar';
             } finally {
-                if (menuButton) menuButton.style.display = '';
+                if (downloadButton) downloadButton.style.display = '';
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 1500);
             }
         }
 
@@ -840,35 +805,14 @@
             
             const bingoCardDiv = cardContainer.querySelector('.bingo-card');
 
-            const menuButton = document.createElement('div');
-            menuButton.className = 'card-menu-btn';
-            menuButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
-
-            const menu = document.createElement('div');
-            menu.id = `menu-${cardNumber}`;
-            menu.className = 'card-menu';
-            menu.innerHTML = `<a href="#" onclick="downloadCard(${cardNumber}, event)">Descargar</a>`;
-
-            bingoCardDiv.appendChild(menuButton);
-            bingoCardDiv.appendChild(menu);
-
-            menuButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.card-menu').forEach(m => {
-                    if (m.id !== `menu-${cardNumber}`) {
-                        m.style.display = 'none';
-                    }
-                });
-                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-            });
+            const downloadButton = document.createElement('div');
+            downloadButton.className = 'card-download-btn';
+            downloadButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
+            downloadButton.onclick = (event) => downloadCard(cardNumber, event);
             
-            cardContainer.addEventListener('click', () => {
-                if (menu.style.display === 'block') {
-                    menu.style.display = 'none';
-                } else {
-                    handleCardClick(cardNumber);
-                }
-            });
+            bingoCardDiv.appendChild(downloadButton);
+            
+            cardContainer.addEventListener('click', () => handleCardClick(cardNumber));
             return cardContainer;
         }
         
@@ -1116,10 +1060,8 @@
             });
 
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('.card-menu-btn')) {
-                    document.querySelectorAll('.card-menu').forEach(m => {
-                        m.style.display = 'none';
-                    });
+                if (!e.target.closest('.card-download-btn')) {
+                    // This can be kept empty or used for other global click logic
                 }
             });
         });
