@@ -368,6 +368,28 @@
         html.dark #cardSearch {
             color: white;
         }
+        
+        /* --- INICIO CAMBIO ANIMACIÓN TEMA --- */
+        /* Estado por defecto (Modo Claro) */
+        #theme-toggle-dark-icon, #theme-toggle-dark-icon-mobile {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+        #theme-toggle-light-icon, #theme-toggle-light-icon-mobile {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.5);
+        }
+
+        /* Estado en Modo Oscuro (cuando <html> tiene la clase .dark) */
+        html.dark #theme-toggle-dark-icon, html.dark #theme-toggle-dark-icon-mobile {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+        html.dark #theme-toggle-light-icon, html.dark #theme-toggle-light-icon-mobile {
+            opacity: 1;
+            transform: rotate(0deg) scale(1);
+        }
+        /* --- FIN CAMBIO ANIMACIÓN TEMA --- */
     </style>
 </head>
 
@@ -384,18 +406,18 @@
                     <a href="#opciones-principales" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Cartones</a>
                     <a href="#pagos" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Pagos</a>
                     <a href="#contacto" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Contacto</a>
-                    <!-- CAMBIO: Animación 'floating' agregada al botón de tema -->
-                    <button id="theme-toggle" class="p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none floating">
-                        <svg id="theme-toggle-dark-icon" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        <svg id="theme-toggle-light-icon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    <!-- CAMBIO: Se eliminó la clase 'floating' y se reestructuraron los SVG para la nueva animación -->
+                    <button id="theme-toggle" class="relative p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none">
+                        <svg id="theme-toggle-dark-icon" class="h-5 w-5 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <svg id="theme-toggle-light-icon" class="h-5 w-5 absolute top-2 left-2 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                     </button>
                 </div>
 
                 <div class="md:hidden flex items-center">
-                     <!-- CAMBIO: Animación 'floating' agregada al botón de tema móvil -->
-                     <button id="theme-toggle-mobile" class="p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none floating">
-                        <svg id="theme-toggle-dark-icon-mobile" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        <svg id="theme-toggle-light-icon-mobile" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                     <!-- CAMBIO: Se eliminó la clase 'floating' y se reestructuraron los SVG para la nueva animación (móvil) -->
+                     <button id="theme-toggle-mobile" class="relative p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none">
+                        <svg id="theme-toggle-dark-icon-mobile" class="h-5 w-5 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <svg id="theme-toggle-light-icon-mobile" class="h-5 w-5 absolute top-2 left-2 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
                     </button>
                     <button id="hamburger-btn" class="ml-2 text-yellow-400 focus:outline-none mobile-menu-button hamburger">
                         <span class="line"></span>
@@ -779,11 +801,12 @@
             return numbers;
         }
 
+        // CAMBIO: Función de descarga optimizada
         async function downloadCard(cardNumber, event) {
             event.stopPropagation();
             
             const toast = document.getElementById('admin-toast');
-            toast.innerText = 'Preparando descarga...';
+            toast.innerText = 'Generando imagen del cartón... 🖼️'; // Mensaje mejorado
             toast.classList.remove('hidden');
 
             const cardContainer = document.getElementById(`card-${cardNumber}`);
@@ -793,14 +816,14 @@
             if (downloadButton) downloadButton.style.display = 'none';
 
             try {
-                // CAMBIO: Se eliminó el retraso artificial para acelerar la descarga
-                // await new Promise(resolve => setTimeout(resolve, 10));
-
                 const canvas = await html2canvas(cardElement, {
                     useCORS: true,
-                    scale: 2,
-                    backgroundColor: '#e8d9b5' // Fondo del color del cartón
+                    scale: 1.5, // CAMBIO: Reducido de 2 a 1.5 para mayor velocidad
+                    backgroundColor: '#e8d9b5'
                 });
+                
+                toast.innerText = 'Iniciando descarga... 🚀'; // Nuevo mensaje de estado
+
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL('image/png');
                 link.download = `BingoClub-Carton-${cardNumber}.png`;
@@ -812,9 +835,10 @@
                 toast.innerText = 'Error al descargar';
             } finally {
                 if (downloadButton) downloadButton.style.display = '';
+                // Damos un poco más de tiempo para que se lea el segundo mensaje
                 setTimeout(() => {
                     toast.classList.add('hidden');
-                }, 1500);
+                }, 2000); 
             }
         }
 
@@ -1039,12 +1063,9 @@
         const themeToggleDarkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
         const themeToggleLightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
 
+        // CAMBIO: Se eliminó el toggle de la clase 'hidden' para que la animación CSS funcione.
         const toggleTheme = () => {
-            themeToggleDarkIcon.classList.toggle('hidden');
-            themeToggleLightIcon.classList.toggle('hidden');
-            themeToggleDarkIconMobile.classList.toggle('hidden');
-            themeToggleLightIconMobile.classList.toggle('hidden');
-
+            // Ya no necesitamos ocultar/mostrar con JS, el CSS lo hace.
             if (localStorage.getItem('color-theme') === 'dark') {
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
@@ -1062,15 +1083,12 @@
             // CAMBIO: Asegurar que la página siempre inicie en modo claro.
             if (localStorage.getItem('color-theme') === 'dark') {
                 // Si estaba oscuro, lo cambiamos a claro.
-                toggleTheme(); 
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
             } else {
                 // Si no está definido o es claro, nos aseguramos que se mantenga claro.
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('color-theme', 'light');
-                themeToggleDarkIcon.classList.remove('hidden');
-                themeToggleDarkIconMobile.classList.remove('hidden');
-                themeToggleLightIcon.classList.add('hidden');
-                themeToggleLightIconMobile.classList.add('hidden');
             }
 
             loadSoldCards();
@@ -1112,5 +1130,4 @@
 </body>
 
 </html>
-
 
