@@ -1,1133 +1,639 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es" class="dark scroll-smooth"> <!-- Forzado Dark Mode por defecto -->
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bingo Club - Tu mejor opción</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='15' y='10' width='70' height='80' rx='6' fill='%23ffffff' stroke='%23000000' stroke-width='2'/%3E%3Ctext x='25' y='30' font-size='16' font-weight='bold' fill='%23000000'%3E2%3C/text%3E%3Ctext x='75' y='85' font-size='16' font-weight='bold' fill='%23000000' transform='rotate(180 75 85)'%3E2%3C/text%3E%3Cpath d='M35,35 Q35,30 40,30 Q45,30 45,35 Q45,40 40,45 Q35,40 35,35 M40,45 L40,50 Q35,50 35,55 Q35,60 40,60 Q45,60 45,55 Q45,50 40,50' fill='%23000000'/%3E%3Cpath d='M65,65 Q65,60 60,60 Q55,60 55,65 Q55,70 60,75 Q65,70 65,65 M60,75 L60,80 Q65,80 65,85 Q65,90 60,90 Q55,90 55,85 Q55,80 60,80' fill='%23000000' transform='rotate(180 60 75)'/%3E%3C/svg%3E" type="image/svg+xml">
+    
+    <!-- Tailwind CSS (Script CDN Standalone para máxima compatibilidad) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Fuentes Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=IM+Fell+English+SC&family=Cinzel+Decorative:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel+Decorative:wght@700&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Configuración Tailwind In-Browser -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { gold: '#d4af37', 'gold-light': '#f3e5ab' },
+                    fontFamily: {
+                        'pirata': ['"Pirata One"', 'cursive'],
+                        'cinzel': ['"Cinzel Decorative"', 'cursive'],
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'standard': ['Arial', 'Helvetica', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-subtle': 'pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'text-shine': 'text-shine-slide 6s infinite linear',
+                    },
+                    keyframes: {
+                        'pulse-subtle': {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.03)' },
+                        },
+                        'text-shine-slide': {
+                            '0%': { backgroundPosition: '100% 0' },
+                            '40%': { backgroundPosition: '-100% 0' },
+                            '100%': { backgroundPosition: '-100% 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=IM+Fell+English+SC&family=Cinzel+Decorative:wght@700&family=Poppins:wght@300;400;600;700&display=swap');
-
-        body {
-            background: #1a4d3a;
-            min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+        /* Estilos Base */
+        html { -webkit-text-size-adjust: 100%; }
+        body { 
+            background: rgb(26, 77, 58); 
+            min-height: 100vh; 
+            font-family: 'Poppins', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        .hero-bg {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        /* Fondo Patrón */
+        .bingo-pattern { 
+            background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.05) 2px, transparent 2px), radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 2px, transparent 2px); 
+            background-size: 50px 50px; 
         }
 
-        .card-hover {
-            transition: all 0.3s ease;
+        /* Glassmorphism */
+        .hero-bg { 
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); 
         }
 
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        /* Header Sticky */
+        #sticky-header {
+            position: sticky; top: 0; z-index: 40;
+            transition: transform 0.3s ease-in-out;
+        }
+        #sticky-header.hidden-nav { transform: translateY(-100%); }
+
+        /* Botón Hero */
+        .btn-epic-cta {
+            background: linear-gradient(45deg, #FFD700, #ff8c00, #ff0000);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite, pulseBig 2s infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.5);
+            border: 2px solid #fff; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+        }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes pulseBig { 0% { transform: scale(1); } 70% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* Animación Shimmer Texto */
+        .text-shimmer {
+            background: linear-gradient(110deg, #ffffff 35%, #ffd700 50%, #ffffff 65%);
+            background-size: 250% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+        .delay-1 { animation-delay: 0s; }
+        .delay-2 { animation-delay: 2s; }
+        .delay-3 { animation-delay: 4s; }
+
+        /* Tarjetas LED y Billete */
+        .led-border-container { position: relative; overflow: hidden; border-radius: 0.75rem; padding: 3px; z-index: 1; }
+        .led-border-container::before {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent 0deg, transparent 270deg, #ff0000 300deg, #ffff00 330deg, #ffffff 360deg);
+            animation: rotate-border 4s linear infinite; transform: translate(-50%, -50%); z-index: -2;
+        }
+        .led-border-content { background: linear-gradient(170deg, #991b1b 0%, #b91c1c 100%); border-radius: 0.6rem; height: 100%; width: 100%; z-index: 1; }
+        @keyframes rotate-border { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .banknote-texture {
+            background-color: #5a8c5a;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0, 40, 0, 0.1) 2px, rgba(0, 40, 0, 0.1) 4px), repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(0, 40, 0, 0.1) 2px, rgba(0, 40, 0, 0.1) 4px);
+            border: 4px solid #2d5a2d; box-shadow: inset 0 0 30px rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .logo-text {
-            font-family: 'Pirata One', cursive;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .subtitle-text {
-            font-family: 'Cinzel Decorative', cursive;
-        }
-
-        .stats-font {
-            font-family: 'Cinzel Decorative', cursive;
-        }
-
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .pulse-glow {
-            animation: pulse-glow 2s infinite;
-        }
-
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 30px rgba(34, 197, 94, 0.8);
-            }
-        }
-
-        .whatsapp-float {
-            position: fixed;
-            bottom: 1.5rem; 
-            right: 1.5rem; 
-            z-index: 1000;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-10px);
-            }
-
-            60% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .bingo-pattern {
-            background-image:
-                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
-                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
-            background-size: 50px 50px;
-        }
-
-        .feature-icon {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 1rem;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, #d4af37, #b8860b);
-        }
-
-        .bingo-body {
+        /* Estilo Cartón */
+        .bingo-card { 
             background-color: #ffffff;
-        }
-
-        .bingo-card {
-            background-color: #e8d9b5;
-            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a38d63' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        .card-title-bingo {
-            font-family: 'Pirata One', cursive;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-number {
-            font-family: 'Cinzel Decorative', cursive;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .bingo-cell {
-            font-family: 'IM Fell English SC', serif;
-        }
-
-        .card-container {
-            break-inside: avoid;
-            page-break-inside: avoid;
-            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            border: 3px solid;
+            border-image: linear-gradient(to bottom right, #d4af37, #f3e5ab, #b48a1e, #d4af37) 1;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25), 0 5px 15px rgba(0,0,0,0.1);
             position: relative; 
-            cursor: default;
+            border-radius: 12px; overflow: hidden;
+            touch-action: manipulation; cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-mask-image: linear-gradient(white, white); mask-image: linear-gradient(white, white); transform: translateZ(0);
         }
+        .bingo-card:active { transform: scale(0.95); filter: brightness(0.95); }
+
+        .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 2px solid #d4af37; border-left: 2px solid #d4af37; background: #d4af37; }
+        .bingo-cell { background: white; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: Arial, Helvetica, sans-serif; font-size: 1.5rem; font-weight: 700; color: #000; border-right: 2px solid #d4af37; border-bottom: 2px solid #d4af37; }
+        .bingo-header-row { background: linear-gradient(to bottom, #d4af37, #b48a1e); color: white; font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+
+        /* UI Helpers */
+        .instruction-banner { background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.5); color: #b45309; border-radius: 8px; padding: 10px; margin-bottom: 20px; text-align: center; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        html.dark .instruction-banner { background: rgba(234, 179, 8, 0.1); color: #fcd34d; }
         
-        .card-container.admin-active {
-            cursor: pointer;
-        }
-
-        .card-container.highlight {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
-            border: 3px solid #22c55e;
-            border-radius: 12px;
-        }
-
-        .search-container {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: #ffffff;
-        }
-
-        .card-container.sold .bingo-card {
-            filter: brightness(0.6);
-            transition: filter 0.3s ease;
-        }
-
-        .card-container.sold::after {
-            content: 'VENDIDO';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg);
-            color: white;
-            background-color: rgba(192, 57, 43, 0.7);
-            padding: 10px 40px;
-            border-radius: 5px;
-            font-size: 2rem;
-            font-weight: bold;
-            border: 3px solid white;
-            z-index: 30;
-            text-shadow: 2px 2px 5px black;
-            pointer-events: none;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 90%;
-            width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            transform: scale(0.9);
-            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-        }
+        .btn-animate { transition: transform 0.1s ease-in-out, filter 0.2s; cursor: pointer; }
+        .btn-animate:active { transform: scale(0.95); }
         
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        #mobile-menu { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; }
+        #mobile-menu.open { max-height: 300px; opacity: 1; }
         
-        .modal-content h2 {
-           color: #1a4d3a;
-           margin-bottom: 1rem;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: white; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
 
-        html.dark body.bingo-pattern { background: #1f2937; }
-        html.dark .hero-bg { background: rgba(31, 41, 55, 0.5); border-color: rgba(75, 85, 99, 0.5); }
-        html.dark .text-gray-200 { color: #d1d5db; }
-        html.dark .text-gray-300 { color: #d1d5db; }
-        html.dark .text-gray-400 { color: #9ca3af; }
-        html.dark .modal-content { background-color: #374151; color: #d1d5db; }
-        html.dark .modal-content h2 { color: #fcd34d; }
-        html.dark .bingo-body { background-color: #1f2937; }
-        html.dark .search-container { background-color: #374151; }
-        html.dark .search-container label { color: #d1d5db; }
-        html.dark #cardSearch { background-color: #4b5563; border-color: #34d399; color: white; }
-        html.dark .bingo-card { background-color: #4b5563; }
-        html.dark .bingo-card .bg-green-50, html.dark .bingo-card .bg-green-800 { background-color: #374151; }
-        html.dark .bingo-card .text-green-800 { color: #a7f3d0; }
-        html.dark .bingo-card .border-green-800 { border-color: #6ee7b7; }
-        html.dark .bingo-card .bg-white { background-color: #4b5563; }
-
-        .card-download-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            z-index: 20;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s;
-        }
-
-        .card-download-btn:hover {
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+        /* Dark Mode Overrides */
+        html.dark body { background: #111827; }
+        html.dark .hero-bg { background: rgba(31, 41, 55, 0.6); border-color: rgba(75, 85, 99, 0.5); }
+        html.dark .text-gray-200 { color: #e5e7eb; }
+        html.dark .modal-content { background: #1f2937; color: white; }
         
-        /* CAMBIO: Estilos para la animación del menú hamburguesa */
-        .hamburger {
-            cursor: pointer;
-            display: block;
-            padding: 10px;
-            position: relative;
-            background-color: transparent;
-            border: none;
-        }
-        .hamburger .line {
-            width: 24px;
-            height: 2px;
-            background-color: currentColor;
-            display: block;
-            margin: 5px 0;
-            transition: all 0.3s ease-in-out;
-        }
-        .hamburger.open .line:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-        .hamburger.open .line:nth-child(2) {
-            opacity: 0;
-        }
-        .hamburger.open .line:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
-
-        /* CAMBIO: Estilos para la animación del menú desplegable */
-        #mobile-menu {
-            transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-        }
-        #mobile-menu.menu-open {
-            max-height: 250px; /* Suficiente para 4 enlaces */
-            opacity: 1;
-        }
-
-
-        @media print {
-            .search-container, .mobile-menu-button, .whatsapp-float, #theme-toggle {
-                display: none;
-            }
-
-            .card-container {
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
-            
-            .card-container.sold::after {
-                display: none;
-            }
-
-            @page {
-                margin: 0.5cm;
-            }
-        }
+        .logo-text { font-family: "Pirata One", cursive; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); }
         
-        #cardSearch {
-            color: black;
+        /* WhatsApp Indestructible */
+        .whatsapp-float { 
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 3000; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background-color: #22c55e; border: 2px solid white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            animation: bounce 2s infinite; text-decoration: none; color: white;
         }
-        html.dark #cardSearch {
-            color: white;
-        }
-        
-        /* --- INICIO CAMBIO ANIMACIÓN TEMA --- */
-        /* Estado por defecto (Modo Claro) */
-        #theme-toggle-dark-icon, #theme-toggle-dark-icon-mobile {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-        #theme-toggle-light-icon, #theme-toggle-light-icon-mobile {
-            opacity: 0;
-            transform: rotate(90deg) scale(0.5);
-        }
-
-        /* Estado en Modo Oscuro (cuando <html> tiene la clase .dark) */
-        html.dark #theme-toggle-dark-icon, html.dark #theme-toggle-dark-icon-mobile {
-            opacity: 0;
-            transform: rotate(-90deg) scale(0.5);
-        }
-        html.dark #theme-toggle-light-icon, html.dark #theme-toggle-light-icon-mobile {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-        /* --- FIN CAMBIO ANIMACIÓN TEMA --- */
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
     </style>
 </head>
 
-<body class="bingo-pattern">
-    <div id="main-content" class="min-h-screen">
-        <nav class="hero-bg p-4 sticky top-0 z-50">
+<body class="bingo-pattern text-gray-100 antialiased">
+    
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-2xl z-[3000] opacity-0 pointer-events-none transition-opacity duration-300 font-bold text-center w-max max-w-[90%]">
+        Acción realizada con éxito
+    </div>
+
+    <div id="main-content">
+        <!-- NAV -->
+        <nav class="hero-bg p-4 sticky top-0 z-50 shadow-md">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
-                <div class="flex items-center">
-                    <span class="font-bold text-xl" style="color: #d4af37;">Club Bingo</span>
+                <div class="flex items-center gap-2 select-none">
+                    <span class="text-3xl">🎱</span>
+                    <span class="font-bold text-2xl text-gold font-pirata tracking-wide">Club Bingo</span>
                 </div>
-
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#inicio" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Inicio</a>
-                    <a href="#opciones-principales" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Cartones</a>
-                    <a href="#pagos" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Pagos</a>
-                    <a href="#contacto" style="color: #d4af37;" class="hover:text-yellow-300 transition-colors">Contacto</a>
-                    <!-- CAMBIO: Se eliminó la clase 'floating' y se reestructuraron los SVG para la nueva animación -->
-                    <button id="theme-toggle" class="relative p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none">
-                        <svg id="theme-toggle-dark-icon" class="h-5 w-5 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        <svg id="theme-toggle-light-icon" class="h-5 w-5 absolute top-2 left-2 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#inicio" class="text-gold hover:text-white transition-colors font-semibold">Inicio</a>
+                    <a href="#opciones-principales" class="text-gold hover:text-white transition-colors font-semibold">Cartones</a>
+                    <a href="#pagos" class="text-gold hover:text-white transition-colors font-semibold">Pagos</a>
+                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" onclick="window.toggleTheme()">
+                        <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                 </div>
-
-                <div class="md:hidden flex items-center">
-                     <!-- CAMBIO: Se eliminó la clase 'floating' y se reestructuraron los SVG para la nueva animación (móvil) -->
-                     <button id="theme-toggle-mobile" class="relative p-2 rounded-full text-yellow-400 hover:bg-white hover:bg-opacity-10 focus:outline-none">
-                        <svg id="theme-toggle-dark-icon-mobile" class="h-5 w-5 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        <svg id="theme-toggle-light-icon-mobile" class="h-5 w-5 absolute top-2 left-2 transition-all duration-300 ease-in-out" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.122l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <div class="md:hidden flex items-center gap-3">
+                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" onclick="window.toggleTheme()">
+                        <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
-                    <button id="hamburger-btn" class="ml-2 text-yellow-400 focus:outline-none mobile-menu-button hamburger">
-                        <span class="line"></span>
-                        <span class="line"></span>
-                        <span class="line"></span>
+                    <button id="hamburger-btn" class="btn-animate hamburger text-gold focus:outline-none p-2" onclick="window.toggleMenu()">
+                        <span class="line block w-6 h-0.5 bg-current mb-1.5 rounded-full"></span>
+                        <span class="line block w-6 h-0.5 bg-current mb-1.5 rounded-full"></span>
+                        <span class="line block w-6 h-0.5 bg-current rounded-full"></span>
                     </button>
                 </div>
             </div>
-            <!-- CAMBIO: Se remueve la clase 'hidden' para que la animación funcione -->
-            <div id="mobile-menu" class="md:hidden mt-4">
-                <a href="#inicio" class="block py-2 px-4 text-sm text-yellow-400 hover:bg-white hover:bg-opacity-10 rounded">Inicio</a>
-                <a href="#opciones-principales" class="block py-2 px-4 text-sm text-yellow-400 hover:bg-white hover:bg-opacity-10 rounded">Cartones</a>
-                <a href="#pagos" class="block py-2 px-4 text-sm text-yellow-400 hover:bg-white hover:bg-opacity-10 rounded">Pagos</a>
-                <a href="#contacto" class="block py-2 px-4 text-sm text-yellow-400 hover:bg-white hover:bg-opacity-10 rounded">Contacto</a>
+            <div id="mobile-menu" class="md:hidden bg-black/20 rounded-lg backdrop-blur-md">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#inicio" class="block px-3 py-2 rounded-md text-base font-medium text-gold hover:bg-white/10">Inicio</a>
+                    <a href="#opciones-principales" class="block px-3 py-2 rounded-md text-base font-medium text-gold hover:bg-white/10">Cartones</a>
+                    <a href="#pagos" class="block px-3 py-2 rounded-md text-base font-medium text-gold hover:bg-white/10">Pagos</a>
+                    <a href="#contacto" class="block px-3 py-2 rounded-md text-base font-medium text-gold hover:bg-white/10">Contacto</a>
+                </div>
             </div>
         </nav>
 
-        <section id="inicio" class="py-20">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <div class="floating mb-8">
-                    <h1 class="logo-text text-6xl md:text-8xl font-bold mb-8" style="color: #d4af37; letter-spacing: 0.2em;">
-                        BINGO CLUB
-                    </h1>
-                    <p class="subtitle-text text-2xl md:text-3xl mb-8" style="color: #d4af37;">
-                        La Experiencia de Bingo Más Emocionante
-                    </p>
+        <!-- HERO -->
+        <section id="inicio" class="py-20 flex flex-col items-center justify-center text-center px-4">
+            <div class="floating mb-8">
+                <h1 class="logo-text text-6xl md:text-8xl font-bold mb-4 text-gold tracking-widest">BINGO CLUB</h1>
+                <p class="subtitle-text text-2xl md:text-3xl text-gold-light font-cinzel">La Experiencia de Bingo Más Emocionante</p>
+            </div>
+
+            <div class="mb-12">
+                <a href="#pagos" class="btn-epic-cta px-10 py-5 rounded-full font-black text-2xl text-white inline-flex items-center gap-3 transform transition-transform hover:scale-110 active:scale-95 no-underline">
+                    <span>🎟️</span> ¡QUIERO GANAR AHORA! <span>🔥</span>
+                </a>
+            </div>
+
+            <!-- GRID ESTADISTICAS -->
+            <div class="w-full max-w-4xl space-y-6">
+                <!-- 1. Diversión Garantizada (Arriba) - FUENTE STANDARD GRUESA + SHIMMER -->
+                <div class="hero-bg p-6 rounded-xl border border-gold/30 hover:scale-105 transition-transform duration-300 w-full flex flex-col items-center justify-center">
+                    <div class="text-4xl mb-2">🎉</div>
+                    <div class="text-3xl font-black text-white font-sans tracking-wide text-shimmer animate-text-shine delay-1 uppercase">DIVERSIÓN GARANTIZADA</div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto">
-                    <div class="stats-card p-6 rounded-xl text-white text-center card-hover floating">
-                        <div class="text-4xl font-bold stats-font">500+</div>
-                        <div class="text-lg stats-font">Cartones Únicos</div>
+                <!-- 2. Otros datos (Abajo) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="hero-bg p-6 rounded-xl border border-gold/30 hover:scale-105 transition-transform duration-300">
+                        <div class="text-4xl font-bold text-white font-cinzel text-shimmer animate-text-shine delay-2">500+</div>
+                        <div class="text-lg text-gold-light">Cartones Únicos</div>
                     </div>
-                    <div class="stats-card p-6 rounded-xl text-white text-center card-hover flex items-center justify-center floating">
-                        <div class="text-4xl font-bold stats-font">JUEGOS DIARIOS</div>
+                    <div class="hero-bg p-6 rounded-xl border border-gold/30 hover:scale-105 transition-transform duration-300 flex flex-col justify-center items-center">
+                        <div class="text-4xl mb-2">🏆</div>
+                        <!-- JUEGOS DIARIOS - FUENTE STANDARD GRUESA + SHIMMER -->
+                        <div class="text-3xl font-black text-white font-sans tracking-wide text-shimmer animate-text-shine delay-3 uppercase">JUEGOS DIARIOS</div>
                     </div>
-                </div>
-
-                <div class="text-center mt-8 floating">
-                    <svg class="h-10 w-10 mx-auto" style="color: #d4af37;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
                 </div>
             </div>
         </section>
 
-        <section id="opciones-principales" class="pt-4 pb-16">
+        <!-- OPCIONES -->
+        <section id="opciones-principales" class="py-16 bg-black/10">
             <div class="max-w-7xl mx-auto px-4">
-                <h2 class="text-4xl font-bold text-center mb-12" style="color: #d4af37;">¿Qué Deseas Hacer?</h2>
+                <h2 class="text-4xl font-bold text-center mb-12 font-pirata text-gold">¿Qué Deseas Hacer?</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="hero-bg p-8 rounded-xl text-center card-hover">
-                        <div class="feature-icon">🎲</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Ver Cartones</h3>
-                        <p class="text-gray-200">Explora nuestros 500 cartones únicos de bingo</p>
-                        <a href="https://docs.google.com/spreadsheets/d/1T67waRer8a2j_qn0Uf54m9_wrPjFKH2SquI7ZFyN2T0/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer" class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg transition-colors inline-block mt-4 mb-2 text-sm">
-                            Ver Disponibilidad (Vendidos)
-                        </a>
-                        <button onclick="showCards()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors inline-block">
-                            Explorar Cartones
-                        </button>
+                    <div class="hero-bg p-8 rounded-xl text-center hover:translate-y-[-5px] transition-transform duration-300 flex flex-col justify-between">
+                        <div>
+                            <div class="text-5xl mb-4">🎲</div>
+                            <h3 class="text-xl font-bold mb-3 text-gold">Ver Cartones</h3>
+                            <p class="text-gray-200 mb-6">Explora nuestros 500 cartones únicos</p>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="window.showBingoSection()" class="btn-animate bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg w-full">Explorar Cartones</button>
+                            <a href="https://docs.google.com/spreadsheets/d/1T67waRer8a2j_qn0Uf54m9_wrPjFKH2SquI7ZFyN2T0/edit?usp=drivesdk" target="_blank" class="btn-animate block bg-yellow-600 hover:bg-yellow-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg w-full text-sm no-underline">📋 Ver Disponibilidad</a>
+                        </div>
                     </div>
-
-                    <div class="hero-bg p-8 rounded-xl text-center card-hover cursor-pointer" onclick="showPaymentInfo()">
-                        <div class="feature-icon">💳</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Pago Móvil</h3>
-                        <p class="text-gray-200">Información para realizar pagos móviles</p>
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors">
-                            Ver Info
-                        </button>
+                    <div class="hero-bg p-8 rounded-xl text-center hover:translate-y-[-5px] transition-transform duration-300">
+                        <div class="text-5xl mb-4">💳</div>
+                        <h3 class="text-xl font-bold mb-3 text-gold">Pago Móvil</h3>
+                        <p class="text-gray-200 mb-6">Realiza tu pago de forma rápida</p>
+                        <a href="#pagos" class="btn-animate block bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg no-underline">Ver Datos</a>
                     </div>
-                    <div class="hero-bg p-8 rounded-xl text-center card-hover cursor-pointer" onclick="openModal('reglasModal')">
-                        <div class="feature-icon">📋</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Reglas</h3>
-                        <p class="text-gray-200">Aprende cómo jugar y ganar en nuestro bingo</p>
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
-                            Leer Más
-                        </button>
+                    <div class="hero-bg p-8 rounded-xl text-center hover:translate-y-[-5px] transition-transform duration-300">
+                        <div class="text-5xl mb-4">📋</div>
+                        <h3 class="text-xl font-bold mb-3 text-gold">Reglas</h3>
+                        <p class="text-gray-200 mb-6">Aprende cómo jugar y ganar</p>
+                        <button onclick="window.openModal('reglasModal')" class="btn-animate bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg w-full">Leer Más</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-8 -mt-8">
-            <div class="max-w-4xl mx-auto px-4">
-                <div class="hero-bg p-6 rounded-xl text-center">
-                    <p class="text-lg text-gray-200">
-                        Seleccione el enlace de WhatsApp en la parte baja derecha para ingresar al grupo.
-                    </p>
-                    <p class="text-xl font-bold" style="color: #d4af37;">
-                        Todas las partidas se jugarán en el grupo BINGO CLUB.
-                    </p>
-                </div>
-            </div>
-        </section>
-
+        <!-- PAGOS -->
         <section id="pagos" class="py-16">
             <div class="max-w-4xl mx-auto px-4">
-                <div class="text-white text-center">
-                    <h2 class="text-3xl font-bold mb-6" style="color: #d4af37;">💳 Información de Pago Móvil</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white bg-opacity-20 p-6 rounded-lg hero-bg">
-                            <h3 class="text-xl font-bold mb-4" style="color: #d4af37;">📱 Pago Móvil</h3>
-                            <div class="text-left space-y-2 text-gray-200">
-                                <p><strong>Banco:</strong> Banesco</p>
-                                <p><strong>Teléfono:</strong> 0412-123-9944</p>
-                                <p><strong>Cédula:</strong> V-32.733.557</p>
-                            </div>
-                        </div>
-                        <div class="bg-white bg-opacity-20 p-6 rounded-lg hero-bg">
-                            <h3 class="text-xl font-bold mb-4" style="color: #d4af37;">💰 Precios</h3>
-                            <div class="text-left space-y-2 text-gray-200">
-                                <p><strong>1 Cartón:</strong> 50 Bs</p>
-                                <p><strong>3 Cartones:</strong> 145 Bs</p>
-                                <p><strong>5 Cartones:</strong> 240 Bs</p>
-                                <p><strong>10 Cartones:</strong> 485 Bs</p>
+                <h2 class="text-3xl font-bold mb-8 text-center font-pirata text-gold">💳 Información de Pago</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+                    
+                    <!-- 1. PRECIOS -->
+                    <div class="led-border-container transform hover:scale-105 transition-transform duration-300 shadow-2xl">
+                        <div class="led-border-content p-8 text-center flex flex-col justify-center h-full relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-white/10 skew-x-12 -translate-x-full group-hover:animate-[shine_1s_infinite] transition-all"></div>
+                            
+                            <h3 class="text-3xl font-bold mb-6 text-white drop-shadow-md font-pirata relative z-10">🔥 OFERTA ESPECIAL 🔥</h3>
+                            <div class="space-y-6 relative z-10">
+                                <div class="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+                                    <span class="block text-gray-500 text-xs uppercase tracking-wider font-bold">Individual</span>
+                                    <div class="flex justify-center items-baseline gap-2">
+                                        <span class="text-4xl font-bold text-gray-800">90</span>
+                                        <span class="text-xl text-red-600 font-bold">Bs</span>
+                                    </div>
+                                    <span class="text-xs text-gray-500">1 Cartón</span>
+                                </div>
+
+                                <div class="p-4 rounded-lg shadow-xl border-4 border-yellow-400 relative animate-pulse-subtle" style="background: linear-gradient(135deg, #dc2626, #fbbf24);">
+                                    <div class="absolute -top-4 -right-2 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full animate-bounce shadow-lg">¡MEJOR OPCIÓN!</div>
+                                    <span class="block text-white text-sm uppercase tracking-wider font-bold drop-shadow-sm">Dúo Ganador</span>
+                                    <div class="flex justify-center items-baseline gap-2">
+                                        <span class="text-6xl font-bold text-white drop-shadow-md">170</span>
+                                        <span class="text-2xl text-white font-bold">Bs</span>
+                                    </div>
+                                    <span class="text-xs text-white font-bold opacity-90">2 Cartones</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-6 p-4 rounded-lg" style="background-color: rgba(30, 58, 138, 0.2);">
-                        <p class="text-sm">⚠️ Envía tu comprobante de pago por WhatsApp para confirmar tu participación ⚠️</p>
+
+                    <!-- 2. PAGO MÓVIL -->
+                    <div class="banknote-texture p-6 rounded-xl flex flex-col justify-center transform transition hover:scale-105 duration-300 border-4 border-green-900 shadow-2xl">
+                        <h3 class="text-3xl font-bold mb-6 text-white text-center border-b-2 border-white/20 pb-4 font-pirata drop-shadow-md">PAGO MÓVIL</h3>
+                        <div class="space-y-4 text-lg text-white pl-4 font-bold font-standard text-shadow">
+                            <p class="flex justify-between border-b border-white/10 pb-1"><span>BANCO:</span> <span class="text-yellow-300">BANESCO</span></p>
+                            <p class="flex justify-between border-b border-white/10 pb-1"><span>TELÉFONO:</span> <span class="text-yellow-300">0412-123-9944</span></p>
+                            <p class="flex justify-between border-b border-white/10 pb-1"><span>CÉDULA:</span> <span class="text-yellow-300">V-32.733.557</span></p>
+                        </div>
+                        <div class="mt-6 bg-black/40 p-3 rounded-lg border border-yellow-400 text-center">
+                            <p class="text-yellow-300 font-bold text-sm uppercase animate-pulse">⚠️ Importante ⚠️</p>
+                            <p class="text-white text-xs mt-1 leading-tight">Para participar, es <strong>OBLIGATORIO</strong> enviar el comprobante de pago al grupo de WhatsApp.</p>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <section class="py-16">
-            <div class="max-w-7xl mx-auto px-4">
-                <h2 class="text-4xl font-bold text-center mb-12" style="color: #d4af37;">¿Por Qué Elegir BINGO CLUB?</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="hero-bg p-6 rounded-xl text-center">
-                        <div class="text-4xl mb-4">🎉</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Diversión Garantizada</h3>
-                        <p class="text-gray-200">Partidas emocionantes y entretenimiento sin límites</p>
-                    </div>
-
-                    <div class="hero-bg p-6 rounded-xl text-center">
-                        <div class="text-4xl mb-4">👥</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Comunidad Activa</h3>
-                        <p class="text-gray-200">Únete a nuestra gran familia de jugadores</p>
-                    </div>
-
-                    <div class="hero-bg p-6 rounded-xl text-center">
-                        <div class="text-4xl mb-4">🏆</div>
-                        <h3 class="text-xl font-bold mb-3" style="color: #d4af37;">Premios Garantizados</h3>
-                        <p class="text-gray-200">Premios seguros dependiendo de cartones vendidos</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <footer class="hero-bg py-12 mt-16 border-t-4 border-yellow-500 pb-24">
+        <!-- FOOTER -->
+        <footer class="hero-bg py-12 border-t-4 border-yellow-600">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <div class="flex justify-center items-center space-x-4 mb-6">
-                    <span class="text-3xl font-bold logo-text" style="color: #d4af37; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CLUB BINGO</span>
+                <div class="mb-10 p-6 bg-gold/10 rounded-xl border border-gold/30">
+                    <p class="text-xl md:text-2xl text-gold font-bold font-pirata mb-2">¡Tu próxima victoria está a un cartón de distancia!</p>
+                    <p class="text-gray-300 mb-4">No dejes pasar la oportunidad de ganar hoy mismo.</p>
+                    <a href="#pagos" class="btn-animate inline-block bg-gold text-black px-8 py-3 rounded-full font-bold shadow-lg hover:bg-white transition-colors no-underline">Comprar Cartón Ahora</a>
                 </div>
-                <p class="text-xl mb-6" style="color: #d4af37;">La mejor experiencia de bingo online</p>
-                <div id="contacto" class="flex justify-center space-x-8 mb-6">
-                    <a href="javascript:void(0)" onclick="openModal('terminosModal')" class="text-gray-300 hover:text-yellow-400 transition-colors text-lg">Términos</a>
-                    <a href="javascript:void(0)" onclick="openModal('privacidadModal')" class="text-gray-300 hover:text-yellow-400 transition-colors text-lg">Privacidad</a>
-                    <a href="https://chat.whatsapp.com/KPdqOlMcm3v600p2qs528c" target="_blank" class="text-gray-300 hover:text-yellow-400 transition-colors text-lg">Contacto</a>
+                <span class="text-3xl font-bold font-pirata text-gold block mb-4">CLUB BINGO</span>
+                <div class="flex justify-center flex-wrap gap-6 mb-8">
+                    <button onclick="window.openModal('terminosModal')" class="text-gray-400 hover:text-gold transition">Términos</button>
+                    <button onclick="window.openModal('privacidadModal')" class="text-gray-400 hover:text-gold transition">Privacidad</button>
+                    <a href="https://chat.whatsapp.com/KPdqOlMcm3v600p2qs528c" target="_blank" class="text-gray-400 hover:text-gold transition">Contacto</a>
                 </div>
-                <p class="text-gray-400 text-sm">© 2025 Club Bingo - Todos los derechos reservados</p>
+                <p class="text-gray-500 text-sm">© 2025 Club Bingo - Todos los derechos reservados</p>
             </div>
         </footer>
-
-        <a href="https://chat.whatsapp.com/KPdqOlMcm3v600p2qs528c" target="_blank" class="whatsapp-float pulse-glow" title="Únete al Grupo de BINGO CLUB">
-            <div class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-colors">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.106" />
-                </svg>
-            </div>
-        </a>
     </div>
 
-    <div id="bingo-cards-content" class="hidden min-h-screen bingo-body">
-        <div class="search-container p-4 shadow-lg">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-center mb-4">
-                    <button onclick="hideCards()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
-                        ← Volver
-                    </button>
-                    <button id="show-sold-btn" onclick="showSoldCardsList()" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
-                        Ver Vendidos
-                    </button>
-                </div>
-                <h1 class="text-2xl md:text-3xl text-center mb-4 font-bold text-green-800 card-title-bingo">
-                    Cartones de Bingo Club
-                </h1>
-                <div class="flex flex-col sm:flex-row gap-2 items-center justify-center">
-                    <label for="cardSearch" class="font-semibold text-sm md:text-base">
-                        Buscar Cartón:
-                    </label>
-                    <div class="flex gap-2">
-                        <input type="number" id="cardSearch" min="1" max="500" placeholder="Número" class="px-3 py-2 border-2 border-green-600 rounded-lg focus:outline-none focus:border-green-800 text-center w-32 md:w-40">
-                        <button onclick="searchCard()" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 text-sm md:text-base">
-                            🔍 Buscar
-                        </button>
-                    </div>
+    <!-- SECCIÓN CARTONES -->
+    <div id="bingo-cards-content" class="hidden min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+        <div id="sticky-header" class="bg-white dark:bg-gray-800 shadow-lg p-4 transition-colors">
+            <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <button onclick="window.hideBingoSection()" class="btn-animate flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-bold transition"><span>←</span> Volver</button>
+                <h1 class="text-2xl md:text-3xl font-bold text-green-700 dark:text-green-400 font-pirata">Explorar Cartones</h1>
+                <div class="flex gap-2">
+                    <input type="number" id="cardSearchInput" min="1" max="500" placeholder="Max. 500" class="w-32 px-4 py-2 border-2 border-green-600 rounded-lg text-center font-bold text-lg dark:bg-gray-700 dark:text-white dark:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 placeholder:text-gray-400 text-sm">
+                    <button onclick="window.searchCard()" class="btn-animate bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-bold transition shadow-md">Buscar</button>
                 </div>
             </div>
         </div>
-
-        <div class="p-4 md:p-8">
-            <div class="max-w-7xl mx-auto">
-                <div id="bingo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                </div>
+        <div class="p-6 max-w-7xl mx-auto">
+            <div class="instruction-banner">
+                <span class="text-xl">💡</span> Mantén presionado el cartón que desees para descargarlo en alta calidad.
+            </div>
+            <div id="bingo-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12 mt-4"></div>
+            <div class="mt-12 text-center">
+                 <button id="loadMoreBtn" onclick="window.loadMoreCards()" class="btn-animate bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg">Cargar más cartones</button>
             </div>
         </div>
     </div>
-    
-    <div id="admin-toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg z-[2000] transition-opacity duration-300">
-    </div>
-    
+
+    <!-- BOTÓN WHATSAPP -->
+    <a href="https://chat.whatsapp.com/KPdqOlMcm3v600p2qs528c" target="_blank" class="whatsapp-float group btn-animate">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.106"></path></svg>
+    </a>
+
+    <!-- MODALES -->
     <div id="terminosModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeModal('terminosModal')">&times;</button>
-            <h2 class="text-2xl font-bold">Términos y Condiciones</h2>
-            <p class="mb-4">Bienvenido a BINGO CLUB. Al participar en nuestros juegos, aceptas los siguientes términos y condiciones:</p>
-            <ul class="list-disc list-inside space-y-2">
-                <li>Los pagos deben ser confirmados antes del inicio del juego para garantizar la participación.</li>
-                <li>Los premios se basan en la cantidad de cartones vendidos por juego y serán anunciados antes de comenzar.</li>
-                <li>No nos hacemos responsables por fallas de conexión a internet, cortes de luz o cualquier otro motivo ajeno a nuestra organización que le impida jugar.</li>
-                <li>Si un jugador no puede participar, debe comunicarlo al menos 1 hora antes de la partida para que su cartón sea válido en el próximo juego.</li>
-                <li>No se realizarán reembolsos de dinero bajo ninguna circunstancia. En caso de no poder jugar (y notificarlo a tiempo), su número será liberado y se le asignará un nuevo cartón para la partida siguiente.</li>
-                <li>En caso de múltiples ganadores en la misma línea o cartón lleno, el premio se dividirá en partes iguales.</li>
-                <li>Cualquier comportamiento antideportivo o trampa resultará en la expulsión inmediata del grupo y la anulación de los cartones.</li>
-                <li class="font-bold">Todo el que juegue debe conocer las reglas de antemano, ya que el desconocer de estas reglas y/o normas no te hace exento de ellas.</li>
-            </ul>
-        </div>
+        <div class="modal-content"><button onclick="window.closeModal('terminosModal')" class="absolute top-4 right-4 text-2xl text-red-500 font-bold p-2">×</button><h2 class="text-2xl font-bold mb-4 font-pirata text-gold">Términos</h2><p>Términos del servicio...</p></div>
     </div>
-
     <div id="privacidadModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeModal('privacidadModal')">&times;</button>
-            <h2 class="text-2xl font-bold">Política de Privacidad</h2>
-            <p class="mb-4">En BINGO CLUB, valoramos tu privacidad y nos comprometemos a proteger tu información personal.</p>
-            <ul class="list-disc list-inside space-y-2">
-                <li>La información de contacto (número de teléfono) se utiliza únicamente para la comunicación relacionada con los juegos y pagos.</li>
-                <li>No compartimos tu información personal con terceros bajo ninguna circunstancia.</li>
-                <li>Al unirte a nuestro grupo de WhatsApp, tu nombre y número de perfil serán visibles para otros miembros del grupo, según la configuración de WhatsApp.</li>
-            </ul>
-        </div>
+        <div class="modal-content"><button onclick="window.closeModal('privacidadModal')" class="absolute top-4 right-4 text-2xl text-red-500 font-bold p-2">×</button><h2 class="text-2xl font-bold mb-4 font-pirata text-gold">Privacidad</h2><p>Política de privacidad...</p></div>
     </div>
-
     <div id="reglasModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeModal('reglasModal')">&times;</button>
-            <h2 class="text-2xl font-bold">🎯 Reglas del Club Bingo 🎯</h2>
-            <ul class="list-disc list-inside space-y-3 mt-4 text-lg">
-                <li><strong>Compra tus cartones:</strong> Realiza el pago a través de los métodos indicados y envía tu comprobante.</li>
-                <li><strong>Cartones Únicos:</strong> Cada cartón contiene una combinación única de números del 1 al 75.</li>
-                <li><strong>El Canto:</strong> Los números se anuncian de forma aleatoria durante la transmisión del juego.</li>
-                <li><strong>Marca tus números:</strong> Presta atención y marca los números cantados que aparezcan en tu cartón.</li>
-                <li><strong>¡BINGO!:</strong> Gana completando los patrones establecidos (línea, columna, cartón lleno, etc.).</li>
-                <li><strong>Premios:</strong> Los premios se entregan de forma inmediata al finalizar la partida.</li>
-            </ul>
-            <p class="mt-6 font-bold text-xl text-center" style="color: #1a4d3a;">¡Mucha Suerte! 🍀</p>
-        </div>
-    </div>
-    
-    <div id="beneficiaryModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold">Asignar Cartón</h2>
-            <p id="beneficiary-modal-text" class="mb-4">Ingrese los datos del comprador para el cartón #X:</p>
-            <div class="space-y-4">
-                <input type="text" id="beneficiaryName" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg" placeholder="Nombre del comprador (obligatorio)">
-                <input type="tel" id="beneficiaryPhone" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg" placeholder="Teléfono (opcional)">
-            </div>
-            <div class="flex justify-end gap-4 mt-6">
-                <button onclick="closeModal('beneficiaryModal')" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
-                <button onclick="submitBeneficiary()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Guardar</button>
-            </div>
-        </div>
+        <div class="modal-content"><button onclick="window.closeModal('reglasModal')" class="absolute top-4 right-4 text-2xl text-red-500 font-bold p-2">×</button><h2 class="text-3xl font-bold mb-6 font-pirata text-gold">Reglas</h2><p>Reglas del juego...</p></div>
     </div>
 
-    <div id="soldListModal" class="modal-overlay">
-        <div class="modal-content">
-             <button class="modal-close-btn" onclick="closeModal('soldListModal')">&times;</button>
-            <h2 class="text-2xl font-bold">Cartones Vendidos</h2>
-            <div id="sold-list-container" class="mt-4">
-            </div>
-        </div>
-    </div>
-    
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="text-2xl font-bold">Confirmar Acción</h2>
-            <p id="confirm-modal-text" class="my-4">¿Estás seguro?</p>
-            <div class="flex justify-end gap-4 mt-6">
-                <button id="confirm-cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancelar</button>
-                <button id="confirm-ok-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-
+    <!-- JS GLOBAL PARA MÁXIMA COMPATIBILIDAD -->
     <script>
-        const BINGO_STORAGE_KEY = 'bingoSoldCards';
-        let isAdmin = sessionStorage.getItem('bingoAdminMode') === 'true';
-        let soldCardsData = {};
-        let currentCardToSell = null;
-        let _confirmCallback = null;
+        // --- UTILIDADES GLOBALES ---
+        // Acceso seguro a localStorage (para evitar fallos en iframes de visores)
+        function safeGetItem(key) {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
+        function safeSetItem(key, val) {
+            try { localStorage.setItem(key, val); } catch (e) {}
+        }
 
-        const theme = {
-            name: "Selva Inexplorada",
-            color: "green-800",
-            bgColor: "green-50",
-            icon: "🌴",
-            accent: "#006400"
-        };
-        
-        function loadSoldCards() {
-            const storedData = sessionStorage.getItem(BINGO_STORAGE_KEY);
-            if (storedData) {
-                soldCardsData = JSON.parse(storedData);
+        // --- TEMA ---
+        window.toggleTheme = function() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                safeSetItem('theme', 'light');
             } else {
-                soldCardsData = {};
+                html.classList.add('dark');
+                safeSetItem('theme', 'dark');
             }
-        }
-        
-        function saveSoldCards() {
-            sessionStorage.setItem(BINGO_STORAGE_KEY, JSON.stringify(soldCardsData));
+        };
+
+        // --- MENÚ ---
+        window.toggleMenu = function() {
+            document.getElementById('mobile-menu').classList.toggle('open');
+            document.getElementById('hamburger-btn').classList.toggle('open');
+        };
+
+        // --- MODALES ---
+        window.openModal = function(id) { document.getElementById(id).classList.add('active'); };
+        window.closeModal = function(id) { document.getElementById(id).classList.remove('active'); };
+
+        // Cerrar al hacer clic fuera
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.onclick = function(e) {
+                if (e.target === overlay) overlay.classList.remove('active');
+            };
+        });
+
+        // --- SCROLL LOGIC ---
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const stickyHeader = document.getElementById('sticky-header');
+            if (!stickyHeader) return;
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                stickyHeader.classList.add('hidden-nav');
+            } else {
+                stickyHeader.classList.remove('hidden-nav');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // --- BINGO LOGIC ---
+        function seededRandom(seed) {
+            let t = seed += 0x6D2B79F5;
+            t = Math.imul(t ^ t >>> 15, t | 1);
+            t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
         }
 
-        function showCards() {
+        function generateBingoNumbers(cardId) {
+            const columns = { B: [], I: [], N: [], G: [], O: [] };
+            const ranges = { B: [1,15], I: [16,30], N: [31,45], G: [46,60], O: [61,75] };
+            let seed = cardId * 12345;
+            for (let letter in ranges) {
+                const [min, max] = ranges[letter];
+                const pool = [];
+                for (let k=min; k<=max; k++) pool.push(k);
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(seededRandom(seed++) * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                columns[letter] = pool.slice(0, 5);
+            }
+            columns.N[2] = '★'; return columns;
+        }
+
+        // --- GESTIÓN CARTONES ---
+        let currentLoadedCount = 0;
+        const BATCH_SIZE = 12;
+
+        window.createCardDOM = function(id) {
+            const numbers = generateBingoNumbers(id);
+            const letters = ['B', 'I', 'N', 'G', 'O'];
+            let gridHTML = '';
+            for (let i=0; i<5; i++) {
+                letters.forEach(l => {
+                    const val = numbers[l][i];
+                    const isStar = val === '★';
+                    gridHTML += `<div class="bingo-cell">${isStar ? '<span style="font-size: 2rem;">🪙</span>' : val}</div>`;
+                });
+            }
+            const card = document.createElement('div');
+            card.className = 'bingo-card transform transition hover:scale-105';
+            
+            // LONG PRESS LOGIC
+            let timer;
+            const startPress = (e) => {
+                timer = setTimeout(() => window.downloadCard(id), 800);
+            };
+            const cancelPress = () => clearTimeout(timer);
+
+            card.addEventListener('mousedown', startPress);
+            card.addEventListener('touchstart', startPress, {passive: true});
+            card.addEventListener('mouseup', cancelPress);
+            card.addEventListener('mouseleave', cancelPress);
+            card.addEventListener('touchend', cancelPress);
+            card.addEventListener('touchmove', cancelPress);
+            // Prevenir menú contextual en móviles
+            card.addEventListener('contextmenu', (e) => { e.preventDefault(); return false; });
+
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-2 px-3 pt-3">
+                    <span class="font-bold text-[#1f2937]" style="font-family:'Cinzel Decorative', cursive; font-size:1.5rem;">#${id}</span>
+                    <span class="text-xs text-[#d4af37] font-bold tracking-widest" style="font-family:'Pirata One';font-size:1.2rem;">CLUB BINGO</span>
+                </div>
+                <div class="bingo-header-row">
+                    <div class="w-full grid grid-cols-5 text-center"><div>B</div><div>I</div><div>N</div><div>G</div><div>O</div></div>
+                </div>
+                <div class="bingo-grid">${gridHTML}</div>
+            `;
+            return card;
+        };
+
+        window.showBingoSection = function() {
             document.getElementById('main-content').classList.add('hidden');
             document.getElementById('bingo-cards-content').classList.remove('hidden');
-            document.body.classList.remove('bingo-pattern');
-            document.body.classList.add('bingo-body');
-            generateCardsInBatches(500);
-            if(isAdmin) {
-                document.getElementById('show-sold-btn').classList.remove('hidden');
-            }
-        }
+            if (currentLoadedCount === 0) window.loadMoreCards();
+        };
 
-        function hideCards() {
-            document.getElementById('main-content').classList.remove('hidden');
+        window.hideBingoSection = function() {
             document.getElementById('bingo-cards-content').classList.add('hidden');
-            document.body.classList.remove('bingo-body');
-            document.body.classList.add('bingo-pattern');
-            document.getElementById('bingo-container').innerHTML = '';
-        }
+            document.getElementById('main-content').classList.remove('hidden');
+        };
 
-        function showPaymentInfo() {
-            document.getElementById('pagos').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                    document.getElementById('mobile-menu').classList.remove('menu-open');
-                    document.getElementById('hamburger-btn').classList.remove('open');
-                }
-            });
-        });
-        
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function generateRandomNumbers(min, max, count, seed) {
-            let random = seed;
-            function seededRandom() {
-                random = (random * 9301 + 49297) % 233280;
-                return random / 233280;
+        window.loadMoreCards = function() {
+            const container = document.getElementById('bingo-grid-container');
+            if (currentLoadedCount >= 500) return;
+            for (let i=0; i<BATCH_SIZE; i++) {
+                currentLoadedCount++;
+                if (currentLoadedCount > 500) break;
+                container.appendChild(window.createCardDOM(currentLoadedCount));
             }
-            const numbers = [];
-            while (numbers.length < count) {
-                const num = Math.floor(seededRandom() * (max - min + 1)) + min;
-                if (!numbers.includes(num)) {
-                    numbers.push(num);
-                }
-            }
-            return numbers;
-        }
+            if (currentLoadedCount >= 500) document.getElementById('loadMoreBtn').style.display = 'none';
+        };
 
-        // CAMBIO: Función de descarga optimizada
-        async function downloadCard(cardNumber, event) {
-            event.stopPropagation();
-            
-            const toast = document.getElementById('admin-toast');
-            toast.innerText = 'Generando imagen del cartón... 🖼️'; // Mensaje mejorado
-            toast.classList.remove('hidden');
-
-            const cardContainer = document.getElementById(`card-${cardNumber}`);
-            const cardElement = cardContainer.querySelector('.bingo-card');
-            const downloadButton = cardElement.querySelector('.card-download-btn');
-
-            if (downloadButton) downloadButton.style.display = 'none';
-
-            try {
-                const canvas = await html2canvas(cardElement, {
-                    useCORS: true,
-                    scale: 1.5, // CAMBIO: Reducido de 2 a 1.5 para mayor velocidad
-                    backgroundColor: '#e8d9b5'
-                });
-                
-                toast.innerText = 'Iniciando descarga... 🚀'; // Nuevo mensaje de estado
-
-                const link = document.createElement('a');
-                link.href = canvas.toDataURL('image/png');
-                link.download = `BingoClub-Carton-${cardNumber}.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (error) {
-                console.error('Error al descargar el cartón:', error);
-                toast.innerText = 'Error al descargar';
-            } finally {
-                if (downloadButton) downloadButton.style.display = '';
-                // Damos un poco más de tiempo para que se lea el segundo mensaje
-                setTimeout(() => {
-                    toast.classList.add('hidden');
-                }, 2000); 
-            }
-        }
-
-        function createBingoCard(cardNumber) {
-            const seed = cardNumber * 12345;
-            const b = generateRandomNumbers(1, 15, 5, seed);
-            const i = generateRandomNumbers(16, 30, 5, seed + 1);
-            const n = generateRandomNumbers(31, 45, 5, seed + 2);
-            const g = generateRandomNumbers(46, 60, 5, seed + 3);
-            const o = generateRandomNumbers(61, 75, 5, seed + 4);
-
-            const cardContainer = document.createElement('div');
-            cardContainer.className = 'card-container';
-            cardContainer.id = `card-${cardNumber}`;
-
-            if(soldCardsData[cardNumber]) {
-                cardContainer.classList.add('sold');
-            }
-            if(isAdmin) {
-                cardContainer.classList.add('admin-active');
-            }
-
-            cardContainer.innerHTML = `
-                <div class="bingo-card rounded-lg overflow-hidden">
-                    <div class="p-1 rounded-lg" style="border: 6px double ${theme.accent};">
-                        <div class="bg-${theme.bgColor} rounded-lg relative overflow-hidden">
-                             <div class="text-center py-2 md:py-3 bg-${theme.color} text-white relative z-10">
-                                <h2 class="text-lg md:text-xl font-bold card-title-bingo">${theme.name} ${theme.icon}</h2>
-                                <div class="text-sm md:text-base card-number">Cartón #${cardNumber}</div>
-                            </div>
-                            <div class="grid grid-cols-5 text-center bg-${theme.color} text-white font-bold text-lg md:text-xl">
-                                <div class="py-1 md:py-2 bingo-cell">B</div> <div class="py-1 md:py-2 bingo-cell">I</div> <div class="py-1 md:py-2 bingo-cell">N</div> <div class="py-1 md:py-2 bingo-cell">G</div> <div class="py-1 md:py-2 bingo-cell">O</div>
-                            </div>
-                            <div class="grid grid-cols-5 gap-1 p-1 md:p-2 bg-${theme.bgColor}">
-                                ${generateBingoRows(b, i, n, g, o)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const bingoCardDiv = cardContainer.querySelector('.bingo-card');
-
-            const downloadButton = document.createElement('div');
-            downloadButton.className = 'card-download-btn';
-            downloadButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>`;
-            downloadButton.onclick = (event) => downloadCard(cardNumber, event);
-            
-            bingoCardDiv.appendChild(downloadButton);
-            
-            cardContainer.addEventListener('click', () => handleCardClick(cardNumber));
-            return cardContainer;
-        }
-        
-        function handleCardClick(cardNumber) {
-            if (!isAdmin) return;
-            const cardElement = document.getElementById(`card-${cardNumber}`);
-            if (cardElement.classList.contains('sold')) {
-                removeSoldCard(cardNumber);
-            } else {
-                currentCardToSell = cardNumber;
-                document.getElementById('beneficiary-modal-text').innerText = `Ingrese los datos del comprador para el cartón #${cardNumber}:`;
-                document.getElementById('beneficiaryName').value = '';
-                document.getElementById('beneficiaryPhone').value = '';
-                openModal('beneficiaryModal');
-                document.getElementById('beneficiaryName').focus();
-            }
-        }
-        
-        function submitBeneficiary() {
-            const name = document.getElementById('beneficiaryName').value.trim();
-            const phone = document.getElementById('beneficiaryPhone').value.trim();
-            
-            if (name && currentCardToSell !== null) {
-                const beneficiaryData = { name, phone };
-                const cardElement = document.getElementById(`card-${currentCardToSell}`);
-                cardElement.classList.add('sold');
-                soldCardsData[currentCardToSell] = beneficiaryData;
-                saveSoldCards();
-                closeModal('beneficiaryModal');
-                currentCardToSell = null;
-            } else {
-                alert('Por favor, ingrese al menos un nombre.');
-            }
-        }
-        
-        function showSoldCardsList() {
-            const container = document.getElementById('sold-list-container');
-            const soldCards = Object.entries(soldCardsData);
-
-            if(soldCards.length === 0) {
-                container.innerHTML = '<p>Aún no hay cartones vendidos.</p>';
-            } else {
-                let tableHTML = '<table class="w-full text-left border-collapse"><thead><tr><th class="border-b-2 p-2">#</th><th class="border-b-2 p-2">Comprador</th><th class="border-b-2 p-2">Teléfono</th><th class="border-b-2 p-2">Acción</th></tr></thead><tbody>';
-                soldCards.sort((a, b) => parseInt(a[0]) - parseInt(b[0])).forEach(([number, data]) => {
-                    tableHTML += `<tr>
-                        <td class="border-b p-2">${number}</td>
-                        <td class="border-b p-2">${data.name}</td>
-                        <td class="border-b p-2">${data.phone || 'N/A'}</td>
-                        <td class="border-b p-2 text-center">
-                            <button onclick="removeSoldCard(${number})" class="text-red-500 hover:text-red-700 p-1" title="Eliminar venta">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                            </button>
-                        </td>
-                    </tr>`;
-                });
-                tableHTML += '</tbody></table>';
-                container.innerHTML = tableHTML;
-            }
-            openModal('soldListModal');
-        }
-
-        function removeSoldCard(cardNumber) {
-            const beneficiaryData = soldCardsData[cardNumber];
-            let confirmationMessage = `¿Desea desmarcar el cartón #${cardNumber} como vendido? Comprador: ${beneficiaryData.name}`;
-            
-            openConfirmModal(confirmationMessage, () => {
-                const cardElement = document.getElementById(`card-${cardNumber}`);
-                if (cardElement) {
-                    cardElement.classList.remove('sold');
-                }
-                delete soldCardsData[cardNumber];
-                saveSoldCards(); 
-                showSoldCardsList(); 
-            });
-        }
-        
-        function openConfirmModal(message, onConfirm) {
-            document.getElementById('confirm-modal-text').innerText = message;
-            _confirmCallback = onConfirm;
-            openModal('confirmModal');
-        }
-
-        function generateBingoRows(b, i, n, g, o) {
-            let html = '';
-            for (let row = 0; row < 5; row++) {
-                html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-white bg-opacity-90 flex items-center justify-center text-sm md:text-lg font-bold text-${theme.color} shadow-sm">${b[row]}</div></div>`;
-                html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-white bg-opacity-90 flex items-center justify-center text-sm md:text-lg font-bold text-${theme.color} shadow-sm">${i[row]}</div></div>`;
-                if (row === 2) {
-                    html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-${theme.color} bg-opacity-90 flex items-center justify-center text-white text-sm md:text-lg font-bold shadow-sm">-</div></div>`;
-                } else {
-                    html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-white bg-opacity-90 flex items-center justify-center text-sm md:text-lg font-bold text-${theme.color} shadow-sm">${n[row]}</div></div>`;
-                }
-                html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-white bg-opacity-90 flex items-center justify-center text-sm md:text-lg font-bold text-${theme.color} shadow-sm">${g[row]}</div></div>`;
-                html += `<div class="aspect-square flex items-center justify-center p-0.5"><div class="w-full h-full rounded border-2 border-${theme.color} bg-white bg-opacity-90 flex items-center justify-center text-sm md:text-lg font-bold text-${theme.color} shadow-sm">${o[row]}</div></div>`;
-            }
-            return html;
-        }
-
-        function generateCardsInBatches(totalCards, batchSize = 20) {
-            const container = document.getElementById('bingo-container');
+        window.searchCard = function() {
+            const val = parseInt(document.getElementById('cardSearchInput').value);
+            if (!val || val < 1 || val > 500) return alert('Por favor ingresa un número entre 1 y 500');
+            const container = document.getElementById('bingo-grid-container');
             container.innerHTML = '';
-            let currentCard = 1;
+            container.appendChild(window.createCardDOM(val));
+            document.getElementById('loadMoreBtn').style.display = 'none';
+        };
 
-            function generateBatch() {
-                const fragment = document.createDocumentFragment();
-                const end = Math.min(currentCard + batchSize - 1, totalCards);
-                for (let i = currentCard; i <= end; i++) {
-                    fragment.appendChild(createBingoCard(i));
-                }
-                container.appendChild(fragment);
-                currentCard = end + 1;
-                if (currentCard <= totalCards) {
-                    requestAnimationFrame(generateBatch);
+        window.downloadCard = async function(id) {
+            const t = document.getElementById('toast');
+            t.textContent = '⏳ Generando imagen...';
+            t.classList.remove('opacity-0');
+
+            await document.fonts.ready;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = 450; const height = 600;
+            canvas.width = width; canvas.height = height;
+
+            // DIBUJO 1:1 CON DOM
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
+            
+            // Textura
+            ctx.fillStyle = 'rgba(0,0,0,0.02)';
+            for(let i=0; i<width; i+=4) { for(let j=0; j<height; j+=4) { if(Math.random()>0.5) ctx.fillRect(i,j,2,2); } }
+
+            // Borde
+            const grad = ctx.createLinearGradient(0,0,width,height);
+            grad.addColorStop(0,'#d4af37'); grad.addColorStop(0.5,'#f3e5ab'); grad.addColorStop(1,'#d4af37');
+            ctx.lineWidth = 10; ctx.strokeStyle = grad; ctx.strokeRect(0,0,width,height);
+
+            const startX = 25; const startY = 35; const gridW = width - 50;
+
+            // ID
+            ctx.fillStyle = '#1f2937'; ctx.font = 'bold 36px "Cinzel Decorative", serif';
+            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+            ctx.fillText(`#${id}`, startX + 10, startY + 25);
+
+            // Marca
+            ctx.fillStyle = '#d4af37'; ctx.font = '30px "Pirata One"'; 
+            ctx.textAlign = 'right'; ctx.fillText('CLUB BINGO', width - startX - 10, startY + 25);
+
+            // Header
+            const headerY = startY + 50; const cellH = 60;
+            const hGrad = ctx.createLinearGradient(startX, headerY, startX, headerY+cellH);
+            hGrad.addColorStop(0, '#d4af37'); hGrad.addColorStop(1, '#b48a1e');
+            ctx.fillStyle = hGrad; ctx.fillRect(startX, headerY, gridW, cellH);
+
+            ctx.fillStyle = '#ffffff'; ctx.font = '900 48px Arial, sans-serif'; ctx.textAlign = 'center';
+            const letters = ['B','I','N','G','O']; const cellW = gridW/5;
+            letters.forEach((l,i) => { ctx.fillText(l, startX + (i*cellW) + (cellW/2), headerY + 48); });
+
+            // Grid
+            const numbers = generateBingoNumbers(id); const keys = ['B','I','N','G','O'];
+            const gridY = headerY + cellH;
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(startX, gridY, gridW, cellW*5);
+            ctx.lineWidth = 2; ctx.strokeStyle = '#d4af37'; ctx.textBaseline = 'middle';
+
+            for(let r=0; r<5; r++) {
+                for(let c=0; c<5; c++) {
+                    const x = startX + (c*cellW); const y = gridY + (r*cellW);
+                    const isStar = (c===2 && r===2); const val = numbers[keys[c]][r];
+                    ctx.strokeRect(x, y, cellW, cellW);
+                    if(isStar) {
+                        ctx.font = '50px serif'; ctx.fillStyle = '#000'; ctx.fillText('🪙', x+cellW/2, y+cellW/2+5);
+                    } else {
+                        ctx.fillStyle = '#000'; ctx.font = 'bold 40px Arial, sans-serif'; ctx.fillText(val, x+cellW/2, y+cellW/2+2);
+                    }
                 }
             }
-            requestAnimationFrame(generateBatch);
+
+            const link = document.createElement('a');
+            link.download = `Bingo_Club_${id}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            t.textContent = '✅ ¡Cartón descargado!';
+            setTimeout(() => t.classList.add('opacity-0'), 2500);
+        };
+
+        // Init Check
+        if(safeGetItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
         }
-        
-        function searchCard() {
-            const searchInput = document.getElementById('cardSearch');
-            const searchValue = searchInput.value;
-            const toast = document.getElementById('admin-toast');
-
-            if (searchValue === '154562') {
-                isAdmin = !isAdmin;
-                sessionStorage.setItem('bingoAdminMode', isAdmin);
-                if (isAdmin) {
-                    toast.innerText = 'Modo administrador activado';
-                    document.querySelectorAll('.card-container').forEach(c => c.classList.add('admin-active'));
-                    document.getElementById('show-sold-btn').classList.remove('hidden');
-                } else {
-                    toast.innerText = 'Modo administrador desactivado';
-                    document.querySelectorAll('.card-container').forEach(c => c.classList.remove('admin-active'));
-                    document.getElementById('show-sold-btn').classList.add('hidden');
-                }
-                toast.classList.remove('hidden');
-                setTimeout(() => { toast.classList.add('hidden'); }, 3000);
-                searchInput.value = '';
-                return;
-            }
-
-            const cardNumber = parseInt(searchValue);
-            if (isNaN(cardNumber) || cardNumber < 1 || cardNumber > 500) {
-                alert('Por favor ingresa un número válido entre 1 y 500.');
-                return;
-            }
-
-            const cardElement = document.getElementById(`card-${cardNumber}`);
-            if (cardElement) {
-                const previousHighlight = document.querySelector('.card-container.highlight');
-                if (previousHighlight) previousHighlight.classList.remove('highlight');
-                
-                const searchBarHeight = document.querySelector('.search-container').offsetHeight;
-                const elementTop = cardElement.offsetTop - searchBarHeight - 20;
-                window.scrollTo({ top: elementTop, behavior: 'smooth' });
-                
-                setTimeout(() => {
-                    cardElement.classList.add('highlight');
-                    setTimeout(() => { cardElement.classList.remove('highlight'); }, 3000);
-                }, 500);
-                searchInput.value = '';
-            } else {
-                alert('Cartón no encontrado. Asegúrate de que todos los cartones hayan cargado.');
-            }
-        }
-
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        const themeToggleDarkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
-        const themeToggleLightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
-
-        // CAMBIO: Se eliminó el toggle de la clase 'hidden' para que la animación CSS funcione.
-        const toggleTheme = () => {
-            // Ya no necesitamos ocultar/mostrar con JS, el CSS lo hace.
-            if (localStorage.getItem('color-theme') === 'dark') {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
-            }
-        }
-        
-        themeToggleBtn.addEventListener('click', toggleTheme);
-        themeToggleMobileBtn.addEventListener('click', toggleTheme);
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // CAMBIO: Asegurar que la página siempre inicie en modo claro.
-            if (localStorage.getItem('color-theme') === 'dark') {
-                // Si estaba oscuro, lo cambiamos a claro.
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
-            } else {
-                // Si no está definido o es claro, nos aseguramos que se mantenga claro.
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
-            }
-
-            loadSoldCards();
-            
-            document.getElementById('cardSearch').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchCard();
-            });
-            
-            document.getElementById('beneficiaryPhone').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitBeneficiary();
-            });
-
-            // CAMBIO: Lógica de animación para el menú móvil
-            document.getElementById('hamburger-btn').addEventListener('click', function() {
-                document.getElementById('mobile-menu').classList.toggle('menu-open');
-                this.classList.toggle('open');
-            });
-            
-            document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
-                closeModal('confirmModal');
-                _confirmCallback = null;
-            });
-            
-            document.getElementById('confirm-ok-btn').addEventListener('click', () => {
-                if(typeof _confirmCallback === 'function') {
-                    _confirmCallback();
-                }
-                closeModal('confirmModal');
-                _confirmCallback = null;
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.card-download-btn')) {
-                    // This can be kept empty or used for other global click logic
-                }
-            });
-        });
     </script>
 </body>
-
 </html>
-
