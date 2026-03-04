@@ -218,17 +218,17 @@
                     <a href="#inicio" class="text-gold hover:text-white transition-colors font-semibold">Inicio</a>
                     <a href="#opciones-principales" class="text-gold hover:text-white transition-colors font-semibold">Cartones</a>
                     <a href="#pagos" class="text-gold hover:text-white transition-colors font-semibold">Pagos</a>
-                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" onclick="window.toggleTheme()">
+                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" id="themeToggleDesktop">
                         <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
                 </div>
                 <div class="md:hidden flex items-center gap-3">
-                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" onclick="window.toggleTheme()">
+                    <button class="btn-animate p-2 rounded-full text-gold hover:bg-white/10" id="themeToggleMobile">
                         <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                     </button>
-                    <button id="hamburger-btn" class="btn-animate hamburger text-gold focus:outline-none p-2" onclick="window.toggleMenu()">
+                    <button id="hamburger-btn" class="btn-animate hamburger text-gold focus:outline-none p-2">
                         <span class="line block w-6 h-0.5 bg-current mb-1.5 rounded-full"></span>
                         <span class="line block w-6 h-0.5 bg-current mb-1.5 rounded-full"></span>
                         <span class="line block w-6 h-0.5 bg-current rounded-full"></span>
@@ -314,4 +314,4 @@
                 <h2 class="text-3xl font-bold mb-8 text-center font-pirata text-gold">💳 Información de Pago</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
                     <div class="led-border-container transform hover:scale-105 transition-transform duration-300">
-                        <div cla
+                        <div class="led-border-content p-8 text-center flex f
